@@ -1,0 +1,80 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                node('master') {
+                    checkout scm
+                }
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                node('master') {
+                    dir('frontend') {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
+                }
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                node('master') {
+                    dir('frontend') {
+                        sh 'npm test -- --watchAll=false'
+                    }
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                node('master') {
+                    sh 'docker build -t ramana2003/finance-tracker:latest .'
+                }
+            }
+        }
+        
+        stage('Login to Docker Hub') {
+            steps {
+                node('master') {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    }
+                }
+            }
+        }
+        
+        stage('Push to Docker Hub') {
+            steps {
+                node('master') {
+                    sh 'docker push ramana2003/finance-tracker:latest'
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                node('master') {
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            node('master') {
+                sh 'docker logout'
+            }
+        }
+    }
+} 
