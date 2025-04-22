@@ -41,11 +41,13 @@ pipeline {
         }
 
         stage('Login to Docker Hub') {
-            steps {
-                bat 'echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin'
-            }
-        }
-
+    steps {
+        bat '''
+        echo|set /p=%DOCKERHUB_CREDENTIALS_PSW%|docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
+        '''
+    }
+}
+        
         stage('Push to Docker Hub') {
             steps {
                 bat "docker push %IMAGE_NAME%:%IMAGE_TAG%"
