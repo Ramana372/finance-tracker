@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub')
         IMAGE_NAME = "ramana2003/finance-tracker"
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
@@ -26,7 +26,6 @@ pipeline {
         stage('Test') {
             steps {
                 dir('frontend') {
-                    // Avoid failure on test errors, continue pipeline
                     bat 'npm test || exit 0'
                 }
             }
@@ -35,31 +34,29 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 dir('frontend') {
-                    bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
-                    bat 'docker tag %IMAGE_NAME%:%IMAGE_TAG% %IMAGE_NAME%:latest'
+                    bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
+                    bat "docker tag %IMAGE_NAME%:%IMAGE_TAG% %IMAGE_NAME%:latest"
                 }
             }
         }
 
         stage('Login to Docker Hub') {
             steps {
-                bat '''
-                echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
-                '''
+                bat 'echo %DOCKERHUB_CREDENTIALS_PSW% | docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin'
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                bat 'docker push %IMAGE_NAME%:%IMAGE_TAG%'
-                bat 'docker push %IMAGE_NAME%:latest'
+                bat "docker push %IMAGE_NAME%:%IMAGE_TAG%"
+                bat "docker push %IMAGE_NAME%:latest"
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deployment step placeholder - customize based on target platform'
-                // Add real deployment commands here, if needed
+                // Add SSH or Docker commands here if needed
             }
         }
     }
@@ -67,7 +64,7 @@ pipeline {
     post {
         always {
             bat 'docker logout'
-            bat 'docker rmi %IMAGE_NAME%:%IMAGE_TAG% || exit 0'
+            bat "docker rmi %IMAGE_NAME%:%IMAGE_TAG% || exit 0"
         }
     }
 }
