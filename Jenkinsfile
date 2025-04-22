@@ -53,7 +53,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh "docker-compose down || true"  // Avoid failure if not running
+                sh "docker-compose down || true"
                 sh "docker-compose up -d"
             }
         }
@@ -61,10 +61,8 @@ pipeline {
 
     post {
         always {
-            node {
-                sh 'docker logout'
-                cleanWs()
-            }
+            sh 'docker logout'
+            cleanWs()
         }
         success {
             echo 'Pipeline completed successfully!'
