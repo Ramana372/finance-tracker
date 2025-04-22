@@ -1,0 +1,159 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: 70px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; 
+}
+
+.logo {
+  height: 40px;
+  border-radius: 10px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  margin: 0 15px;
+}
+
+.nav-links li a {
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a i {
+  margin-right: 5px;
+}
+
+.nav-links li a:hover {
+  color: #4a90e2;
+}
+
+.user-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.sub-menu-wrap {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  width: 300px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+  background: white;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.open-menu {
+  max-height: 400px;
+}
+
+.sub-menu {
+  padding: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.user-info img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.user-info h3 {
+  color: #333;
+  font-weight: 500;
+  margin: 0;
+}
+
+.sub-menu hr {
+  border: 0;
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 10px 0;
+}
+
+.sub-menu-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+  margin: 12px 0;
+  transition: background-color 0.3s ease;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.sub-menu-link p {
+  width: 100%;
+  margin: 0;
+  margin-left: 15px;
+}
+
+.sub-menu-link i {
+  font-size: 18px;
+  color: #666;
+}
+
+.sub-menu-link span {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.sub-menu-link:hover {
+  background-color: #f1f1f1;
+}
+
+.sub-menu-link:hover span {
+  transform: translateX(5px);
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  width: 100%;
+  text-align: none;
+}
+
+@media (max-width: 768px) {
+  .help-container {
+    margin-top: 70px;
+    padding: 15px;
+  }
+  
+  .nav-links {
+    display: none;
+  }
+}
