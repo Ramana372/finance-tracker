@@ -69,8 +69,4 @@ pipeline {
             bat "docker rmi %IMAGE_NAME%:%IMAGE_TAG% || exit 0"
         }
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 34510835062b167601dd28119d8e902288fd5940
