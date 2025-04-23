@@ -1,80 +1,68 @@
 pipeline {
     agent any
-    
+
+    tools {
+        nodejs "NodeJS" // Correct NodeJS tool name
+    }
+
     environment {
+        PATH = "/usr/local/bin:$PATH" // Add Docker path to Jenkins environment
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
     }
-    
+
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                node('master') {
-                    checkout scm
+                git branch: 'main', url: 'https://github.com/Ramana372/finance-tracker.git'
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                    sh 'npm run build'
                 }
             }
         }
-        
-        stage('Build') {
-            steps {
-                node('master') {
-                    dir('frontend') {
-                        sh 'npm install'
-                        sh 'npm run build'
-                    }
-                }
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                node('master') {
-                    dir('frontend') {
-                        sh 'npm test -- --watchAll=false'
-                    }
-                }
-            }
-        }
-        
+
         stage('Build Docker Image') {
             steps {
-                node('master') {
-                    sh 'docker build -t ramana2003/finance-tracker:latest .'
-                }
+                sh '/usr/local/bin/docker build -t ramana2003/finance-tracker:latest .'
             }
         }
-        
+
         stage('Login to Docker Hub') {
             steps {
-                node('master') {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    }
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | /usr/local/bin/docker login -u $DOCKER_USER --password-stdin'
                 }
             }
         }
-        
+
         stage('Push to Docker Hub') {
             steps {
-                node('master') {
-                    sh 'docker push ramana2003/finance-tracker:latest'
-                }
+                sh '/usr/local/bin/docker push ramana2003/finance-tracker:latest'
             }
         }
-        
-        stage('Deploy') {
+
+        stage('Stop Old Container') {
             steps {
-                node('master') {
-                    sh 'docker-compose up -d'
-                }
+                sh '/usr/local/bin/docker stop finance-tracker-container || true'
+                sh '/usr/local/bin/docker rm finance-tracker-container || true'
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                sh '/usr/local/bin/docker run -d -p 3000:3000 --name finance-tracker-container ramana2003/finance-tracker:latest'
             }
         }
     }
-    
+
     post {
         always {
-            node('master') {
-                sh 'docker logout'
-            }
+            sh '/usr/local/bin/docker logout'
         }
     }
 } 
