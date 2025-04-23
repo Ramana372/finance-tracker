@@ -12,6 +12,7 @@ import './App.css';
 import Help from './components/Help';
 import Privacy from './components/Privacy';
 
+
 function App() {
   return (
     <AuthProvider>
