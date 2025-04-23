@@ -23,7 +23,7 @@ function Home() {
   return (
     <div className="hero" style={heroStyle}>
       <div className="content" style={contentStyle}>
-        <h1>"Money is like an Addiction; Don't Addict it leads to causes...."</h1>
+        <h1>"Money is like an Addiction; Don't Addict it leads to causes....."</h1>
         <Link 
           to="/Savings" 
           style={{
