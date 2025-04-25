@@ -56,18 +56,17 @@ pipeline {
         }
 
         stage('Stop Old Container') {
-            steps {
-                sh 'docker stop finance-tracker-container || true'
-                sh 'docker rm finance-tracker-container || true'
-            }
-        }
+    steps {
+        bat 'docker stop finance-tracker || exit 0'
+        bat 'docker rm finance-tracker || exit 0'
+    }
+}
 
-        stage('Run New Container') {
-            steps {
-                sh "docker run -d -p 3099:80 --name finance-tracker-container ramana2003/finance-tracker:latest"
-            }
-        }
-
+stage('Run New Container') {
+    steps {
+        bat "docker run -d -p 3099:80 --name finance-tracker ramana2003/finance-tracker:latest"
+    }
+}
         stage('Deploy') {
             steps {
                 echo 'Deployment step placeholder - customize based on target platform'
