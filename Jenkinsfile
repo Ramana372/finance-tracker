@@ -41,13 +41,13 @@ pipeline {
         }
 
         stage('Login to Docker Hub') {
-    steps {
-        bat '''
-        echo|set /p=%DOCKERHUB_CREDENTIALS_PSW%|docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
-        '''
-    }
-}
-        
+            steps {
+                bat '''
+                echo|set /p=%DOCKERHUB_CREDENTIALS_PSW%|docker login -u %DOCKERHUB_CREDENTIALS_USR% --password-stdin
+                '''
+            }
+        }
+
         stage('Push to Docker Hub') {
             steps {
                 bat "docker push %IMAGE_NAME%:%IMAGE_TAG%"
@@ -55,10 +55,22 @@ pipeline {
             }
         }
 
+        stage('Stop Old Container') {
+            steps {
+                sh 'docker stop finance-tracker-container || true'
+                sh 'docker rm finance-tracker-container || true'
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                sh "docker run -d -p 3099:80 --name finance-tracker-container ramana2003/finance-tracker:latest"
+            }
+        }
+
         stage('Deploy') {
             steps {
                 echo 'Deployment step placeholder - customize based on target platform'
-                // Add SSH or Docker commands here if needed
             }
         }
     }
